@@ -1,0 +1,57 @@
+/****
+LMK61E2
+****/
+
+#include <Inc/Type.h>
+#include "CI2C.h"
+#define PLL_dev_addr	(0x58+((0)<<1))
+#define DEV_PLL 		"/dev/i2c-4"  	//设备文件路径
+#define PLL_AMX_SIZE	512  			//容量512 bytes
+#define PLL_PAGE_SIZE	16   			//AT24C08页大小为16字节
+
+struct stPllReg
+{
+	uchar addr;
+	uchar value;
+};
+
+stPllReg PllReg[] = 
+{
+	{0x1e,0x00},
+	{0x1f,0x00},
+	{0x20,0x01},
+	{0x16,0x00},
+	{0x17,0x05},
+	{0x1b,0x00},
+	{0x1c,0x00},
+	{0x1d,0x00},
+	{0x19,0x00},
+	{0x1a,0x32},
+	{0x25,0x00},
+	{0x27,0x00},
+	{0x24,0x08},
+	{0x26,0x00},
+	{0x22,0x28},
+	{0x21,0x0c},
+	{0x21,0x0c},
+	{0x23,0x03},
+	{0x23,0x03},
+	{0x48,0x02},
+};
+
+dev_eeprom i2c_pll(DEV_PLL, PLL_dev_addr, PLL_PAGE_SIZE, PLL_AMX_SIZE);
+
+
+void PLL_Init(void)
+{
+	//i2c_pll.write(0x30, (uchar)0x58);
+	//usleep(1000);
+	for(uint i = 0; i < element(PllReg); i++)
+	{
+		i2c_pll.write(PllReg[i].addr, PllReg[i].value);
+		usleep(10000);
+	}
+}
+
+
+
